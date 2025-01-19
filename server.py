@@ -340,6 +340,19 @@ class GameRoom:
                         # 所有玩家都放弃叉牌，结束叉牌阶段
                         self.fork_enabled = False
                         self.current_card = None
+                        
+                        # 检查当前玩家是否已经出完牌
+                        if len(self.player_cards[self.current_player]) == 0:
+                            # 如果当前玩家已经出完牌，检查是否游戏结束
+                            players_with_cards = [p for p in self.players if len(self.player_cards[p]) > 0]
+                            if len(players_with_cards) <= 1:
+                                # 游戏结束
+                                if len(players_with_cards) == 0:
+                                    last_player = [p for p in self.players if p not in self.finished_order][0]
+                                    if last_player not in self.finished_order:
+                                        self.finished_order.append(last_player)
+                                return True, "游戏结束"
+                        
                         self.next_player()
                         self.passed_players.clear()
                         # 如果之前是给光状态，恢复给光状态
